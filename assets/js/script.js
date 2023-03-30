@@ -8,13 +8,13 @@ let todo=[];
 
 function add(){
 
-    if(inp.value==' '  || todo.find(inp.value)){
+    if(inp.value!=' '  || !todo.find(`${inp.value}`)){
 
-        alert('Bu deyer daxil edile bilmez!');
-    }
-    else{
         todo.push(inp.value);
         inp.value='';
+    }
+    else{
+        alert('Bu deyer daxil edile bilmez!');
     }
 
     let data='';
