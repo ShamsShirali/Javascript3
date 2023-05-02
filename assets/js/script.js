@@ -1,51 +1,62 @@
-"use strickt";
+"use strict";
 
 let inp = document.getElementById('inp');
-let btn = document.getElementById('btn');
-let btn2 = document.getElementById('btn2');
+let form = document.getElementById('form');
 let list = document.getElementById('list');
+// document.addEventListener("DOMContentLoaded", localGet);
 
-let todo = [];
-
-function listcount(){
-  
-  let data='';
-
-  for (let item in todo) {
-    if (item != inp.value) {
-      data += `<li class="list-group-item"> ${todo[item]} </li>`;
-    }
-  }
-
-    list.innerHTML = data;
+function add(e) {
+  e.preventDefault();
+  Display(inp.value);
+  localAdd();
+  inp.value = "";
 }
 
-function add() {
+function localAdd() {
+  let todo;
 
-  if (inp.value != '' && !todo.includes(`${inp.value}`)) {
-    todo.push(inp.value);
-    inp.value = '';
-
-    listcount();
+  if (localStorage.getItem("todo") === null) {
+    todo = [];
   }
   else {
-    alert('Bu deyer daxil edile bilmez!');
-  }
-}
-
-function deleteitem() {
-  for (let item in todo) {
-    if (todo[item] == inp.value) {
-      todo.splice(item, 1);
-    }
+    todo = JSON.parse(localStorage.getItem("todo"));
   }
 
-  listcount();
+  todo.push(inp.value);
+  localStorage.setItem("todo", JSON.stringify(todo));
 }
 
-btn.addEventListener('click', add);
-btn2.addEventListener('click', deleteitem);
-form.addEventListener("submit",(e)=>{
-  e.preventDefault();
-  add();
-})
+function localGet() {
+  let todo = JSON.parse(localStorage.getItem("todo"));
+
+  todo.forEach(item => {
+    Display(item);
+  })
+}
+
+function Display(data) {
+  let newList = document.createElement("li");
+
+  newList.classList.add("list-group-item", "d-flex", "justify-content-between");
+  newList.textContent = data;
+  list.appendChild(newList);
+
+  let newBtn = document.createElement("button");
+
+  newBtn.classList.add("btn", "btn-danger", "btn-sm");
+  newBtn.textContent = "Delete";
+  newBtn.setAttribute("onclick", "Delete(this)");
+  newList.appendChild(newBtn);
+}
+
+function Delete(item) {
+  let text = item.parentNode.firstChild.textContent;
+  let todo = JSON.parse(localStorage.getItem("todo"));
+  let inde = todo.indexOf(text);
+
+  todo.splice(inde, 1);
+  localStorage.setItem("todo", JSON.stringify(todo));
+  item.parentElement.remove();
+}
+
+form.addEventListener("submit", add);
